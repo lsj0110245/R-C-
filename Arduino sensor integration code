@@ -1,0 +1,50 @@
+#include "DHT.H"
+#include <SoftwareSerial.h>
+
+SoftwareSerial BTserial(2,3);
+
+#define DHTPIN A1
+#define DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+
+int GAS = A0;
+int flame = 7;
+int state = 0;
+
+void setup(){
+	pinMode(GAS, INPUT);
+	pinMode(flame, INPUT);
+
+	Serial.begin(9600);
+	BTserial.begin(9600);
+}
+
+void loop(){
+	int h = dht.readHumidity();
+	int t = dht.readTemperature();
+	int g = GAS;
+	state = digitalRead(flame);
+
+	if (state == 0){
+		BTserial.println("1");
+		delay(100);
+	}
+	else {
+		BTserial.println("2");
+		delay(100);
+	}
+
+	BTserial.println("가스량: ");
+	BTserial.println(g);
+
+	BTserial.println("습도: ");
+	BTserial.println(h);
+	BTserial.println("%");
+
+	BTserial.println("온도: ");
+	BTserial.println(t);
+	BTserial.println("C");
+	
+	delay(1000);
+}
